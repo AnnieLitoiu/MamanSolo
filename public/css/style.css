@@ -1,0 +1,77 @@
+/* public/css/style.css */
+
+/* 🌸 Palette de couleurs (rose & douceur) */
+:root {
+  --rose-principal: #f8c5d6;       /* rose clair principal */
+  --rose-secondaire: #f5a6c6;      /* rose moyen */
+  --rose-fonce: #e682ab;           /* rose plus soutenu */
+  --fond-clair: #ffe6f1;           /* fond général */
+  --texte-principal: #333333;
+  --blanc: #ffffff;
+  --gris-clair: #eeeeee;
+}
+
+/*  Structure générale */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--fond-clair);
+  color: var(--texte-principal);
+}
+
+/* 🏠 Header */
+header {
+  background: var(--blanc);
+  border-bottom: 2px solid var(--rose-secondaire);
+  padding: 6px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(245, 166, 198, 0.25);
+}
+
+/* Logo */
+.logo img {
+  height: 80px;
+  width: auto;
+  display: block;
+  margin: 0;
+  padding: 0;
+  transition: transform 0.2s ease-in-out;
+}
+
+.logo img:hover {
+  transform: scale(1.05);
+}
+
+/* 📄 Contenu principal */
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* 🖼️ Images adaptables */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 📱 Responsive design */
+@media (max-width: 768px) {
+  nav a {
+    display: block;
+    margin: 6px 0;
+  }
+
+  header {
+    padding: 8px 16px;
+  }
+
+  .logo img {
+    height: 60px; /* logo plus petit sur mobile */
+  }
+}
