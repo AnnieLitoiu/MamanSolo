@@ -36,22 +36,33 @@
 
                 <label for="email">E-mail :</label>
                 <input type="email" id="email" placeholder="Entrez votre e-mail " required>
+                <p>Choisissez votre avatar :</p>
 
-                <label for="budget">Budget de départ :</label>
-                <input type="number" id="budget" placeholder="Enterz votre budget" required>
+                <div id="avatar-gallery">
+                    <img src="./images-avatar/maman_blonde_normal.png" alt="Avatar Brun 1" class="avatar-thumbnail" onclick="changerAvatar('brun_1')">
+                    <img src="./images-avatar/maman_brune_normal.png" alt="Avatar Brun 2" class="avatar-thumbnail" onclick="changerAvatar('brun_2')">
+                    <img src="./images-avatar/maman_rousse_lisse_normal.png" alt="Avatar Blond 1" class="avatar-thumbnail" onclick="changerAvatar('blond_1')">
+                    <img src="./images-avatar/maman_rousse_normal.png" alt="Avatar Blond 2" class="avatar-thumbnail" onclick="changerAvatar('blond_2')">
+                    <img src="./images-avatar/maman_boucle_normal.png" alt="Avatar avec foulard 1" class="avatar-thumbnail" onclick="changerAvatar('foulard_1')">
+                    <img src="./images-avatar/maman_voile_normal.png" alt="Avatar avec foulard 2" class="avatar-thumbnail" onclick="changerAvatar('foulard_2')">
+                    <img src="./images-avatar/maman_lisse_normal.png" alt="Avatar avec foulard 2" class="avatar-thumbnail" onclick="changerAvatar('foulard_2')">
+                    <img src="./images-avatar/maman_noir_bouclé_normal.png" alt="Avatar avec foulard 2" class="avatar-thumbnail" onclick="changerAvatar('foulard_2')">
+
+                </div>
+            
 
                <p>Nombre d'enfants :</p>
     <div class="options">
         <label>
-            <input type="radio" name="nombre_enfants" value="1">
+            <input type="radio" name="nombre_enfants" value="1">Bébé
             👩‍👦
         </label>
         <label>
-            <input type="radio" name="nombre_enfants" value="2">
+            <input type="radio" name="nombre_enfants" value="2">Adolescent
             👩‍👧‍👦
         </label>
         <label>
-            <input type="radio" name="nombre_enfants" value="0">
+            <input type="radio" name="nombre_enfants" value="0">Bébé et adolescent
             🏃
         </label>
     </div>
