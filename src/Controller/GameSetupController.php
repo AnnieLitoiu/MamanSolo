@@ -23,10 +23,19 @@ class GameSetupController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $composition = $form->get('composition')->getData(); // bebe | ado | les_deux
-            $request->getSession()->set('compositionFamiliale', $composition);
+            // RÉCUPÉRATION DES 3 CHAMPS
+            $composition  = $form->get('composition')->getData();    // bebe | ado | les_deux
+            $logement     = $form->get('logement')->getData();       // studio|appartement|maison
+            $situationPro = $form->get('situationPro')->getData();   // cdi|cdd|interim|sans_emploi
 
-            return $this->redirectToRoute('game_new'); // vérifie que cette route existe
+            // STOCKAGE EN SESSION
+            $session = $request->getSession();
+            $session->set('compositionFamiliale', $composition);
+            $session->set('logement', $logement);
+            $session->set('situationPro', $situationPro);
+
+            // Lancement du jeu
+            return $this->redirectToRoute('game_play');
         }
 
         // Affichage

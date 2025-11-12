@@ -1,8 +1,11 @@
 <?php
 
-
 namespace App\Controller;
 
+use App\Entity\Partie;
+use App\Entity\Utilisateur;
+use App\Service\GameEngine;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,33 +13,59 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class GameController extends AbstractController
 {
-    #[Route('/game/new', name: 'game_new', methods: ['GET'])]
-    public function new(Request $request): Response
+    public function __construct(
+        private EntityManagerInterface $em,
+        private GameEngine $engine
+    ) {}
+
+    #[Route('/game/play', name: 'game_play', methods: ['GET'])]
+    public function play(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $composition = $request->getSession()->get('compositionFamiliale'); // 'bebe' | 'ado' | 'les_deux'
+        $session      = $request->getSession();
+        $composition  = $session->get('compositionFamiliale'); // bebe|ado|les_deux
+        $logement     = $session->get('logement');
+        $situationPro = $session->get('situationPro');
+
         if (!$composition) {
             $this->addFlash('warning', 'Choisis d’abord ta situation familiale.');
             return $this->redirectToRoute('game_setup_family');
         }
 
-        // Init selon la composition (exemple simple)
+        /** @var Utilisateur $user */
+        $user = $this->getUser();
+
+        // 1) Calculer le budget/bonheur de départ selon la situation
         $presets = [
-            'bebe'     => ['budget' => 1200, 'bien_etre' => 65, 'bonheur' => 70],
-            'ado'      => ['budget' => 1000, 'bien_etre' => 70, 'bonheur' => 65],
-            'les_deux' => ['budget' => 900,  'bien_etre' => 60, 'bonheur' => 60],
+            'bebe'     => ['budget' => '1200.00', 'bonheur' => 70],
+            'ado'      => ['budget' => '1000.00', 'bonheur' => 65],
+            'les_deux' => ['budget' => '900.00',  'bonheur' => 60],
         ];
-        $base = $presets[$composition] ?? ['budget' => 1000, 'bien_etre' => 65, 'bonheur' => 65];
+        $base = $presets[$composition] ?? ['budget' => '1000.00', 'bonheur' => 65];
 
-        $request->getSession()->set('game_state', [
-            'week'        => 1,
-            'budget'      => $base['budget'],
-            'bien_etre'   => $base['bien_etre'],
-            'bonheur'     => $base['bonheur'],
-            'composition' => $composition,
+        // 2) Créer la Partie initiale
+        $partie = (new Partie())
+            ->setUtilisateur($user)
+            ->setBudgetCourant($base['budget'])
+            ->setBonheurCourant($base['bonheur']);
+
+        // 3) Démarrer la partie via le GameEngine de Karima (4 semaines)
+        $this->engine->demarrerPartie($partie, 4);
+
+        // 4) Sauvegarder en base
+        $this->em->persist($partie);
+        $this->em->flush();
+
+        // 5) Garder l'id de la partie en session si tu veux t'en resservir côté PHP
+        $session->set('current_game_id', $partie->getId());
+
+        // 6) Afficher la page "jeu" pour Fouzia (avec l'ID)
+        return $this->render('game/play.html.twig', [
+            'partie'       => $partie,
+            'composition'  => $composition,
+            'logement'     => $logement,
+            'situationPro' => $situationPro,
         ]);
-
-        return $this->redirectToRoute('game_week1');
     }
 }
