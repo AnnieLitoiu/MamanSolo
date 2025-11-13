@@ -1,30 +1,31 @@
 <?php
 
 namespace App\Service;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class EventsJsonLoader
 {
+    private string $jsonPath;
     private array $data;
 
-    public function __construct(string $jsonPath = null)
+    public function __construct(KernelInterface $kernel, string $jsonPath = null)
     {
-        $jsonPath = $jsonPath ?? __DIR__ . '/../../public/data/events.json';
+        $this->jsonPath = $jsonPath ?? $kernel->getProjectDir() . '/src/DataFixtures/evenements.json';
 
-        if (!file_exists($jsonPath)) {
-            throw new \RuntimeException("Fichier JSON introuvable : $jsonPath");
+        if (!file_exists($this->jsonPath)) {
+            throw new \RuntimeException("Fichier JSON introuvable : $this->jsonPath");
         }
 
-        $content  = file_get_contents($jsonPath);
-        $decoded  = json_decode($content, true);
-        if ($decoded === null) {
-            throw new \RuntimeException("JSON invalide dans $jsonPath");
+        $content  = file_get_contents($this->jsonPath);
+        $this->data =json_decode($content, true);
+        if ($this->data === null) {
+            throw new \RuntimeException("JSON invalide dans : {$this->jsonPath}");
         }
 
-        $this->data = $decoded;
     }
 
-    public function getWeeks(): array
+    public function getData(): array
     {
-        return $this->data['weeks'] ?? [];
+        return $this->data;
     }
 }
