@@ -6,10 +6,6 @@ use App\Entity\Evenement;
 use App\Entity\Option;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
-
 
 class EvenementFixtures extends Fixture
 {
@@ -70,10 +66,9 @@ class EvenementFixtures extends Fixture
             $manager->persist($option);
             $event->addOption($option);
         }
-        $manager->persist($event);
-     }
 
         $manager->flush();
+    }
     }
 }
 }
