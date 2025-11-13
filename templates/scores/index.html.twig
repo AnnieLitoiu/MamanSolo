@@ -1,10 +1,169 @@
 {% extends 'base.html.twig' %}
 {% block title %}Classement{% endblock %}
 
+{% block stylesheets %}
+<style>
+  .container-scores {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+
+  .scores-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .scores-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .scores-table {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .scores-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .scores-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .scores-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .scores-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+  }
+
+  .scores-table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  .scores-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .scores-table td {
+    padding: 1rem;
+  }
+
+  .rang {
+    font-weight: bold;
+    color: #667eea;
+    width: 60px;
+    text-align: center;
+  }
+
+  .rang-medaille {
+    font-size: 1.5rem;
+  }
+
+  .nom-joueur {
+    font-weight: 500;
+    color: #333;
+  }
+
+  .score-valeur {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #28a745;
+    text-align: right;
+  }
+
+  .message-vide {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+  }
+
+  .btn-retour {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.75rem 1.5rem;
+    background: #667eea;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s;
+  }
+
+  .btn-retour:hover {
+    background: #764ba2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+</style>
+{% endblock %}
+
 {% block body %}
-  <section class="container" style="max-width: 720px; margin: 2rem auto;">
-    <h1>Tableau des scores</h1>
-    <p class="text-muted">Le classement arrivera ici très vite </p>
-    <a class="btn btn-link" href="{{ path('app_menu') }}">Retour au menu</a>
+  <section class="container-scores">
+    <div class="scores-header">
+      <h1>🏆 Tableau des scores</h1>
+      <p>Classement des meilleurs joueurs</p>
+    </div>
+
+    {% if profils is empty %}
+      <div class="message-vide">
+        <p>Aucun score enregistré pour le moment.</p>
+        <p>Soyez le premier à jouer et à apparaître dans le classement !</p>
+      </div>
+    {% else %}
+      <div class="scores-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Rang</th>
+              <th>Joueur</th>
+              <th style="text-align: right;">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for profil in profils %}
+              <tr>
+                <td class="rang">
+                  {% if loop.index == 1 %}
+                    <span class="rang-medaille">🥇</span>
+                  {% elseif loop.index == 2 %}
+                    <span class="rang-medaille">🥈</span>
+                  {% elseif loop.index == 3 %}
+                    <span class="rang-medaille">🥉</span>
+                  {% else %}
+                    {{ loop.index }}
+                  {% endif %}
+                </td>
+                <td class="nom-joueur">
+                  {% if profil.utilisateur %}
+                    {{ profil.utilisateur.email|split('@')|first }}
+                  {% else %}
+                    Joueur anonyme
+                  {% endif %}
+                </td>
+                <td class="score-valeur">
+                  {{ profil.score }} pts
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    <div style="text-align: center;">
+      <a class="btn-retour" href="{{ path('app_menu') }}">← Retour au menu</a>
+    </div>
   </section>
 {% endblock %}
