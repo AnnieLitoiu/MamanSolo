@@ -108,5 +108,4 @@ class EvenementFixtures extends Fixture
         // On flush une seule fois à la fin
         $manager->flush();
     }
-
 }
