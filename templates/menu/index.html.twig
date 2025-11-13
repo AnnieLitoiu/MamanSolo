@@ -11,7 +11,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 2rem;
+    padding: 0rem;
     position: relative;
     overflow: hidden;
   }
@@ -192,6 +192,7 @@
     font-weight: bold;
     transition: all 0.3s ease;
     z-index: 10;
+    margin-right: 50px;
   }
 
   .menu-logout:hover {
@@ -266,71 +267,35 @@
 {% block body %}
 
 <section class="container menu-principal">
-  {# Bulles décoratives #}
   <div class="deco-bubble"></div>
   <div class="deco-bubble"></div>
   <div class="deco-bubble"></div>
 
-  {# Bouton déconnexion #}
   {% if app.user %}
     <a href="{{ path('app_logout') }}" class="menu-logout">
       ↪ Déconnexion
     </a>
   {% endif %}
 
-  {# Titre principal #}
-  <div class="menu-titre">
-    <h1>
-      <span class="emoji-decoration">💪</span>
-      Maman Solo
-      <span class="emoji-decoration">❤️</span>
-    </h1>
-  </div>
+<div class="container">
+    <h1>Maman budget </h1>
 
-  <p class="menu-subtitle">
-    Bienvenue {{ app.user ? app.user.nom : 'joueuse' }} ! Démarre une partie, consulte le classement ou ton profil.
-  </p>
+    <!-- Image de fond -->
+    <img src="./images/images-mamanSolo/living-room.webp" alt="Salon" class="background">
+    <!-- Femme (personnage) -->
+    <img src="./images/images-mamanSolo/avatar-maman.png" alt="Femme expliquant" class="character">
 
-  {# Cartes d'action #}
-  <div class="menu-actions">
+    <div class="wrapper-center">
+        <div class="card-demarrer">
+            <h3>Démarre une partie, <br><br>consultez le classement ou votre profil</h3>
 
-    {# Carte Démarrer le jeu #}
-    <a class="menu-card" href="{{ path('game_setup_family') }}">
-      <div class="menu-card-content">
-        <span class="menu-card-icon">🎮</span>
-        <h2 class="menu-card-titre">Démarrer le jeu</h2>
-        <p class="menu-card-description">
-          Lance une nouvelle partie et relève les défis du quotidien
-        </p>
-      </div>
-    </a>
+            <a href="{{ path('game_setup_family') }}" class="btn-connecter">Démarrer le jeu</a>
+            <a href="{{ path('scores_index') }}" class="btn-connecter">Tableau des scores</a>
+            <a href="{{ path('profil_dashboard') }}" class="btn-connecter">Mon profil</a>
+        </div>
+    </div>
 
-    {# Carte Tableau des scores #}
-    <a class="menu-card" href="{{ path('scores_index') }}">
-      <div class="menu-card-content">
-        <span class="menu-card-icon">🏆</span>
-        <h2 class="menu-card-titre">Tableau des scores</h2>
-        <p class="menu-card-description">
-          Découvre les meilleures performances et compare-toi
-        </p>
-      </div>
-    </a>
-
-    {# Carte Mon profil #}
-    <a class="menu-card profil-card" href="{{ path('profil_dashboard') }}">
-      {% if app.user %}
-        <span class="badge-user">{{ app.user.nom|slice(0, 1)|upper }}</span>
-      {% endif %}
-      <div class="menu-card-content">
-        <span class="menu-card-icon">👤</span>
-        <h2 class="menu-card-titre">Mon profil</h2>
-        <p class="menu-card-description">
-          Consulte tes statistiques et ton historique de parties
-        </p>
-      </div>
-    </a>
-
-  </div>
+</div>
 
 </section>
 

@@ -22,23 +22,23 @@ class AppFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        // Créer des utilisateurs avec profils et scores variés
+        // Créer des utilisateurs avec profils et scores variés (noms arabes, roumains et belges)
         $nomsUtilisateurs = [
-            ['nom' => 'Sophie Martin', 'email' => 'sophie.martin@example.com', 'score' => 8500],
-            ['nom' => 'Marie Dubois', 'email' => 'marie.dubois@example.com', 'score' => 7800],
-            ['nom' => 'Julie Bernard', 'email' => 'julie.bernard@example.com', 'score' => 9200],
-            ['nom' => 'Claire Petit', 'email' => 'claire.petit@example.com', 'score' => 6900],
-            ['nom' => 'Isabelle Roux', 'email' => 'isabelle.roux@example.com', 'score' => 8100],
-            ['nom' => 'Anne Moreau', 'email' => 'anne.moreau@example.com', 'score' => 7500],
-            ['nom' => 'Nathalie Simon', 'email' => 'nathalie.simon@example.com', 'score' => 8800],
-            ['nom' => 'Caroline Laurent', 'email' => 'caroline.laurent@example.com', 'score' => 7200],
-            ['nom' => 'Valérie Lefebvre', 'email' => 'valerie.lefebvre@example.com', 'score' => 9500],
-            ['nom' => 'Sandrine Leroy', 'email' => 'sandrine.leroy@example.com', 'score' => 8300],
-            ['nom' => 'Patricia Garnier', 'email' => 'patricia.garnier@example.com', 'score' => 7600],
-            ['nom' => 'Sylvie Rousseau', 'email' => 'sylvie.rousseau@example.com', 'score' => 8700],
-            ['nom' => 'Catherine Blanc', 'email' => 'catherine.blanc@example.com', 'score' => 6800],
-            ['nom' => 'Monique Girard', 'email' => 'monique.girard@example.com', 'score' => 9100],
-            ['nom' => 'Martine Bonnet', 'email' => 'martine.bonnet@example.com', 'score' => 7900],
+            ['nom' => 'Sophie Dupont', 'email' => 'sophie.dupont@example.com', 'score' => 7600],
+            ['nom' => 'Julie Claessens', 'email' => 'julie.claessens@example.com', 'score' => 8700],
+            ['nom' => 'Charlotte Van den Berg', 'email' => 'charlotte.vandenberg@example.com', 'score' => 6800],
+            ['nom' => 'Marie Janssens', 'email' => 'marie.janssens@example.com', 'score' => 9100],
+            ['nom' => 'Anne Vermeulen', 'email' => 'anne.vermeulen@example.com', 'score' => 7900],
+            ['nom' => 'Fatima El Amrani', 'email' => 'fatima.elamrani@example.com', 'score' => 8500],
+            ['nom' => 'Amina Benali', 'email' => 'amina.benali@example.com', 'score' => 7800],
+            ['nom' => 'Leila Kaddouri', 'email' => 'leila.kaddouri@example.com', 'score' => 9200],
+            ['nom' => 'Samira Mansouri', 'email' => 'samira.mansouri@example.com', 'score' => 6900],
+            ['nom' => 'Nadia Hamidi', 'email' => 'nadia.hamidi@example.com', 'score' => 8100],
+            ['nom' => 'Elena Popescu', 'email' => 'elena.popescu@example.com', 'score' => 7500],
+            ['nom' => 'Ioana Ionescu', 'email' => 'ioana.ionescu@example.com', 'score' => 8800],
+            ['nom' => 'Andreea Constantinescu', 'email' => 'andreea.constantinescu@example.com', 'score' => 7200],
+            ['nom' => 'Maria Dumitrescu', 'email' => 'maria.dumitrescu@example.com', 'score' => 9500],
+            ['nom' => 'Gabriela Stanescu', 'email' => 'gabriela.stanescu@example.com', 'score' => 8300],
         ];
 
         $typesPartie = ['bebe', 'ado', 'deux'];
