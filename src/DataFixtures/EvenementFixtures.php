@@ -11,18 +11,18 @@ class EvenementFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-    // 1) Chemin attendu : src/DataFixtures/evenements.json
+        // 1) Chemin attendu : src/DataFixtures/evenements.json
         $path = __DIR__ . '/evenements.json';
 
         // 2) Si le fichier n'existe pas => on NE plante PAS, on sort.
         if (!is_file($path)) {
-            // Rien à charger, on laisse passer les autres fixtures.
             return;
         }
 
         // 3) Lire et décoder en sécurité
         $json = file_get_contents($path);
         $data = json_decode($json, true);
+
         if (!is_array($data)) {
             // JSON invalide => on sort sans bloquer
             return;
@@ -30,45 +30,80 @@ class EvenementFixtures extends Fixture
 
         // 4) Parcours des données
         foreach ($data as $situation => $events) {
+            // On s’assure que $events est bien un tableau
             if (!is_array($events)) {
                 continue;
             }
-     foreach ($events as $eventData) {
-        $event = new Evenement();
-        $event->setTexte($eventData['text']);
-        $event->setSemaine($situation);
-        $event->setScenario($eventData['scenario']?? null);
-        $event->setSemaineApplicable($eventData['weekNumber']?? null);
-        $event->setType('REGULIER');
-        foreach ($eventData['choices'] as $choiceData) {
-            $option = new Option();
-            $option->setLibelle($choiceData['text']);
-            
-            // Map the impact values to the corresponding fields
-            $impact = $choiceData['impact'] ?? [];
-            if (isset($impact['budget'])) {
-                $option->setDeltaBudget((string)$impact['budget']);
-            }
-            if (isset($impact['bienEtre'])) {
-                $option->setDeltaBienEtre((int)$impact['bienEtre']);
-            }
-            if (isset($impact['stress'])) {
-                // Assuming stress affects bienEtre negatively
-                $option->setDeltaBienEtre($option->getDeltaBienEtre() - (int)$impact['stress']);
-            }
-            if (isset($impact['enfants'])) {
-                // Assuming enfants affects bonheur
-                $option->setDeltaBonheur((int)$impact['enfants']);
-            }
-            
-            $option->setEvenement($event);
 
-            $manager->persist($option);
-            $event->addOption($option);
+            foreach ($events as $eventData) {
+                // On s’assure que $eventData est bien un tableau
+                if (!is_array($eventData)) {
+                    continue;
+                }
+
+                $event = new Evenement();
+
+                // Texte de l’événement
+                $event->setTexte($eventData['text'] ?? '');
+                // Ici tu mets "semaine" = clé de niveau 1 (ex : "Semaine 1")
+                $event->setSemaine($situation);
+                $event->setScenario($eventData['scenario'] ?? '');
+                $event->setSemaineApplicable($eventData['weekNumber'] ?? null);
+                $event->setType('REGULIER');
+
+                // Récupération des choix
+                $choices = $eventData['choices'] ?? [];
+                if (!is_array($choices)) {
+                    $choices = [];
+                }
+
+                foreach ($choices as $choiceData) {
+                    // Pareil, on vérifie que c’est un tableau
+                    if (!is_array($choiceData)) {
+                        continue;
+                    }
+
+                    $option = new Option();
+                    $option->setLibelle($choiceData['text'] ?? '');
+
+                    // Impact
+                    $impact = $choiceData['impact'] ?? [];
+                    if (!is_array($impact)) {
+                        $impact = [];
+                    }
+
+                    // Budget (string en DB)
+                    if (array_key_exists('budget', $impact)) {
+                        $option->setDeltaBudget((string) $impact['budget']);
+                    }
+
+                    // Bien-être + stress → on combine dans un même delta
+                    $deltaBienEtre = 0;
+                    if (array_key_exists('bienEtre', $impact)) {
+                        $deltaBienEtre += (int) $impact['bienEtre'];
+                    }
+                    if (array_key_exists('stress', $impact)) {
+                        // On considère que le stress diminue le bien-être
+                        $deltaBienEtre -= (int) $impact['stress'];
+                    }
+                    $option->setDeltaBienEtre($deltaBienEtre);
+
+                    // Bonheur des enfants
+                    if (array_key_exists('enfants', $impact)) {
+                        $option->setDeltaBonheur((int) $impact['enfants']);
+                    }
+
+                    $option->setEvenement($event);
+                    $event->addOption($option);
+
+                    $manager->persist($option);
+                }
+
+                $manager->persist($event);
+            }
         }
 
+        // On flush une seule fois à la fin
         $manager->flush();
     }
-    }
-}
 }
