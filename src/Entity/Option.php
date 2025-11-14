@@ -30,6 +30,15 @@ class Option
     #[ORM\Column]
     private int $deltaBonheur = 0;
 
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $cout = 0;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $impactBienEtreMaman = 0;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $impactBienEtreEnfant = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,4 +98,38 @@ class Option
         $this->deltaBonheur = $deltaBonheur;
         return $this;
     }
+
+    public function getCout(): int
+    {
+        return $this->cout;
+    }
+
+    public function setCout(int $cout): static
+    {
+        $this->cout = $cout;
+        return $this;
+    }
+
+    public function getImpactBienEtreMaman(): int
+    {
+        return $this->impactBienEtreMaman;
+    }
+
+    public function setImpactBienEtreMaman(int $impactBienEtreMaman): static
+    {
+        $this->impactBienEtreMaman = $impactBienEtreMaman;
+        return $this;
+    }
+
+    public function getImpactBienEtreEnfant(): int
+    {
+        return $this->impactBienEtreEnfant;
+    }
+
+    public function setImpactBienEtreEnfant(int $impactBienEtreEnfant): static
+    {
+        $this->impactBienEtreEnfant = $impactBienEtreEnfant;
+        return $this;
+    }
 }
+

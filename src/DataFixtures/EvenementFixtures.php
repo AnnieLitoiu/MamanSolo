@@ -76,6 +76,17 @@ class EvenementFixtures extends Fixture
                                 $option->setDeltaBonheur($bonheur);
                             }
 
+                            // Champs supplémentaires optionnels issus du JSON (si présents)
+                            if (isset($choiceData['cout'])) {
+                                $option->setCout((int) $choiceData['cout']);
+                            }
+                            if (isset($choiceData['impact_bien_etre_maman'])) {
+                                $option->setImpactBienEtreMaman((int) $choiceData['impact_bien_etre_maman']);
+                            }
+                            if (isset($choiceData['impact_bien_etre_enfant'])) {
+                                $option->setImpactBienEtreEnfant((int) $choiceData['impact_bien_etre_enfant']);
+                            }
+
                             $manager->persist($option);
                         }
                     }
@@ -86,3 +97,4 @@ class EvenementFixtures extends Fixture
         $manager->flush();
     }
 }
+

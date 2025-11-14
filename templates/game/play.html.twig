@@ -300,12 +300,16 @@
   {# Statistiques #}
   <div class="game-stats">
     <div class="stat-box">
-      <div class="stat-label">Budget</div>
-      <div class="stat-value">{{ partie.budgetCourant }} €</div>
+      <div class="stat-label">Budget (session)</div>
+      <div class="stat-value">{{ session_budget }} €</div>
     </div>
     <div class="stat-box">
-      <div class="stat-label">Bonheur</div>
-      <div class="stat-value">{{ partie.bonheurCourant }}</div>
+      <div class="stat-label">Bien-être Maman</div>
+      <div class="stat-value">{{ session_bien_etre_maman }}/10</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Bien-être Enfant</div>
+      <div class="stat-value">{{ session_bien_etre_enfant }}/10</div>
     </div>
   </div>
 
@@ -313,6 +317,21 @@
   {% for message in app.flashes('error') %}
     <div class="alert alert-danger">{{ message }}</div>
   {% endfor %}
+
+  {# Charges fixes appliquées cette semaine (loyer, etc.) #}
+  {% if charges_fixes_appliquees is defined and charges_fixes_appliquees is not empty %}
+    <div class="alert alert-info">
+      <strong>Charges de la semaine :</strong>
+      <ul style="margin: 0.5rem 0 0 1.2rem;">
+        {% set totalCharges = 0 %}
+        {% for lib, montant in charges_fixes_appliquees %}
+          {% set totalCharges = totalCharges + montant %}
+          <li>{{ lib }} : -{{ montant }} €</li>
+        {% endfor %}
+      </ul>
+      <div style="margin-top: 0.5rem;">Total déduit : <strong>-{{ totalCharges }} €</strong></div>
+    </div>
+  {% endif %}
 
   {# Contenu principal #}
   {% if partie.etat == 'TERMINE' %}
@@ -337,7 +356,16 @@
                 value="{{ option.id }}"
                 class="option-button"
               >
-                {{ option.libelle }}
+                <div><strong>{{ option.libelle }}</strong></div>
+                <div style="font-size: 0.95rem; color: #555; margin-top: 0.3rem;">
+                  {% set coutAff = option.cout %}
+                  {% if coutAff == 0 and option.deltaBudget is defined and option.deltaBudget < 0 %}
+                    {% set coutAff = (option.deltaBudget * -1) %}
+                  {% endif %}
+                  Coût : {{ coutAff|number_format(0, '.', ' ') }} €
+                  | Maman : {% if option.impactBienEtreMaman >= 0 %}+{% endif %}{{ option.impactBienEtreMaman|default(0) }}
+                  | Enfant : {% if option.impactBienEtreEnfant >= 0 %}+{% endif %}{{ option.impactBienEtreEnfant|default(0) }}
+                </div>
               </button>
             {% endfor %}
           </form>

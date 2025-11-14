@@ -60,6 +60,30 @@ class GameController extends AbstractController
             ->setBienEtreInitial($base['bienEtre'])
             ->setBonheurCourant($base['bonheur']);
 
+        // 2bis) Initialiser la Session pour budget/bien-être (sans casser la logique existante)
+        // Exemples par défaut; on peut raffiner selon composition/logement/situationPro si besoin
+        $session->set('budget', (int) round((float) $base['budget']));
+        $session->set('bien_etre_maman', 5);
+        $session->set('bien_etre_enfant', 5);
+
+        // 2ter) Initialiser des charges fixes mensuelles selon le logement (valeurs par défaut)
+        // On stocke des montants mensuels, appliqués chaque semaine en les divisant par 4
+        $chargesFixes = [];
+        $logementKey = (string) ($logement ?? 'prive');
+        // Valeurs par défaut si aucun setup plus fin n'est fourni
+        if ($logementKey === 'social') {
+            $chargesFixes['Loyer'] = 450; // mensuel
+        } elseif ($logementKey === 'chez_parents') {
+            $chargesFixes['Loyer'] = 0;
+        } else {
+            // locataire privé
+            $chargesFixes['Loyer'] = 700;
+        }
+        // Autres charges (exemples)
+        $chargesFixes['Électricité + Internet'] = 90; // mensuel
+        $chargesFixes['Transport'] = 50; // mensuel
+        $session->set('charges_fixes', $chargesFixes);
+
         // 3) Démarrer la partie via le GameEngine (4 semaines)
         $this->engine->demarrerPartie($partie, 4);
 
@@ -116,6 +140,22 @@ class GameController extends AbstractController
             ) {
                 $this->addFlash('error', 'Choix invalide pour cet événement.');
             } else {
+                // Session: budget/bien-être
+                $session = $request->getSession();
+                $budget = (int) $session->get('budget', 300);
+                $bienMaman = (int) $session->get('bien_etre_maman', 5);
+                $bienEnfant = (int) $session->get('bien_etre_enfant', 5);
+
+                // Appliquer les effets de l'option côté Session
+                $budget = max(0, $budget - (int) $option->getCout());
+                $bienMaman = max(0, min(10, $bienMaman + (int) $option->getImpactBienEtreMaman()));
+                $bienEnfant = max(0, min(10, $bienEnfant + (int) $option->getImpactBienEtreEnfant()));
+
+                // Sauvegarder en Session
+                $session->set('budget', $budget);
+                $session->set('bien_etre_maman', $bienMaman);
+                $session->set('bien_etre_enfant', $bienEnfant);
+
                 // Logique jeu : appliquer les effets + passer à la semaine suivante
                 $this->engine->appliquerOption($partie, $semaine, $option);
                 $this->engine->cloturerSemaine($partie, $semaine);
@@ -145,6 +185,29 @@ class GameController extends AbstractController
         $evenement = null;
 
         if ($partie->getEtat() === 'EN_COURS') {
+            // Appliquer les charges fixes une fois par semaine (au premier affichage GET)
+            $session = $request->getSession();
+            $appliedKey = sprintf('charges_appliquees_%d_%d', $partie->getId(), $partie->getSemaineCourante());
+            $chargesFixesAppliquees = [];
+            if (!$session->get($appliedKey, false)) {
+                $chargesFixes = (array) $session->get('charges_fixes', []);
+                $totalHebdo = 0;
+                foreach ($chargesFixes as $lib => $mensuel) {
+                    $hebdo = (int) round(((int) $mensuel) / 4);
+                    $chargesFixesAppliquees[$lib] = $hebdo;
+                    $totalHebdo += $hebdo;
+                }
+                if ($totalHebdo > 0) {
+                    $budget = (int) $session->get('budget', 300);
+                    $budget = max(0, $budget - $totalHebdo);
+                    $session->set('budget', $budget);
+                    $session->set($appliedKey, true);
+                    $session->set('charges_fixes_appliquees', $chargesFixesAppliquees);
+                }
+            } else {
+                $chargesFixesAppliquees = (array) $session->get('charges_fixes_appliquees', []);
+            }
+
             $evenement = $semaine->getEvenementCourant();
 
             // Si aucun événement encore assigné à cette semaine, on en pioche un aléatoire
@@ -171,10 +234,21 @@ class GameController extends AbstractController
             }
         }
 
+        // Lire la session pour l'affichage
+        $session = $request->getSession();
+        $sessionBudget = (int) $session->get('budget', 300);
+        $sessionBienMaman = (int) $session->get('bien_etre_maman', 5);
+        $sessionBienEnfant = (int) $session->get('bien_etre_enfant', 5);
+        $chargesFixesAppliquees = (array) $session->get('charges_fixes_appliquees', []);
+
         return $this->render('game/play.html.twig', [
             'partie'    => $partie,
             'semaine'   => $semaine,
             'evenement' => $evenement,
+            'session_budget' => $sessionBudget,
+            'session_bien_etre_maman' => $sessionBienMaman,
+            'session_bien_etre_enfant' => $sessionBienEnfant,
+            'charges_fixes_appliquees' => $chargesFixesAppliquees,
         ]);
     }
 
@@ -222,3 +296,4 @@ class GameController extends AbstractController
         ]);
     }
 }
+
