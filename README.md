@@ -18,7 +18,7 @@ MamanBudget est une application web éducative développée avec Symfony qui sim
 - Symfony 7.3
 - Doctrine ORM
 - Twig
-- HTML5 / CSS3 / JavaScript
+- HTML5 / CSS3
 - Composer
 - MySQL/MariaDB
 
@@ -26,7 +26,6 @@ MamanBudget est une application web éducative développée avec Symfony qui sim
 
 - PHP 8.2 ou supérieur
 - Composer
-- Node.js et NPM
 - MySQL/MariaDB
 - Symfony CLI (recommandé)
 
@@ -178,12 +177,6 @@ Le système de formulaires
 
 Le système de sécurité (authentification)
 
-JavaScript
-
-Le JavaScript est utilisé dans les pages Twig pour dynamiser l’interface (mise à jour du DOM, interactions utilisateur).
-Le fonctionnement du jeu ne repose pas sur une architecture API ; les contrôleurs Symfony renvoient principalement des vues Twig plutôt que du JSON.
-Les décisions sont transmises via des formulaires ou appels AJAX directement à des routes Symfony classiques.
-
 Logique métier
 
 La gestion de la progression (semaine, choix, impacts) repose sur un service interne dédié.
@@ -194,5 +187,5 @@ Chaque membre travaille sur sa propre branche puis effectue un merge vers la bra
 Conclusion
 
 MamanBudget propose une expérience à la fois simple d’accès et significative.
-Le projet combine un design interactif en JavaScript, une structure solide en Symfony et un ensemble d’événements narratifs construits autour de la réalité des familles monoparentales.
+Le projet combine une interface utilisateur en Twig, une structure solide en Symfony et un ensemble d'événements narratifs construits autour de la réalité des familles monoparentales.
 Le travail collaboratif a permis d’intégrer plusieurs compétences complémentaires pour construire un jeu éducatif cohérent.
